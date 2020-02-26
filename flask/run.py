@@ -24,6 +24,8 @@ from app.multiplythread import Multiply_Thread
 
 #UPLOAD_FOLDER = '/root/zhenjinote/note/vue/static/images'  #文件存放路径
 UPLOAD_FOLDER = 'images'  #文件存放路径
+if not os.path.exists("images"):
+    os.mkdir("images")
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif']) #限制上传文件格式
 
 DATABASE = sys.path[0]+'/mydb.db'
