@@ -10,7 +10,7 @@ import socket
 import ftplib
 from urllib.parse import urlparse
 
-class Ftp_Weakpwd_BaseVerify():
+class Ftp_Weakpwd_BaseVerify:
     def __init__(self, url):
         self.url = url
         self.timeout = 3

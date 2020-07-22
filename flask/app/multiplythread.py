@@ -8,6 +8,7 @@ import importlib
 from app.scan import Port_Scan
 from app.mysql import Mysql_db
 from app.aes import Aes_Crypto
+from app.oneforall.oneforall import OneForAll
 
 class Multiply_Thread():
     def __init__(self):
@@ -21,6 +22,7 @@ class Multiply_Thread():
 
     def async_exe(self, func, args = None, kwargs = None, delay = 0):
         """异步执行方法
+        
         :param func: 待执行方法
         :param args: 方法args参数
         :param kwargs: 方法kwargs参数
@@ -38,12 +40,24 @@ class Multiply_Thread():
         return thread
 
     def run(self, *args, **kwargs):
-        #scan_list = self.port_scan.masscan_scan(kwargs['username'], kwargs['target'], kwargs['scan_ip'])
         scan_set = self.mysqldb.get_scan(kwargs['username'], kwargs['target'])
         if scan_set['scanner'] == 'nmap':
-            scan_list = self.port_scan.nmap_scan(kwargs['username'], kwargs['target'], kwargs['scan_ip'], scan_set['min_port'], scan_set['max_port'])
+            scan_list = self.port_scan.nmap_scan(kwargs['username'], kwargs['target'], kwargs['target_ip'], scan_set['min_port'], scan_set['max_port'])
         else:
-            scan_list = self.port_scan.masscan_scan(kwargs['username'], kwargs['target'], kwargs['scan_ip'], scan_set['min_port'], scan_set['max_port'], scan_set['rate'] )
+            scan_list = self.port_scan.masscan_scan(kwargs['username'], kwargs['target'], kwargs['target_ip'], scan_set['min_port'], scan_set['max_port'], scan_set['rate'])
+
+        if kwargs['domain'] != '':
+            self.mysqldb.update_scan(kwargs['username'], kwargs['target'], '开始扫描子域名')
+            oneforall = OneForAll(kwargs['domain'])
+            data = oneforall.run()
+            for item in data:
+                subdomain = item['subdomain']
+                subdomain_ip = item['content']
+                if self.mysqldb.get_target_domain(kwargs['username'], kwargs['target'], subdomain):
+                    self.mysqldb.update_target_domain(kwargs['username'], kwargs['target'], subdomain, subdomain_ip)
+                else:
+                    self.mysqldb.save_target_domain(kwargs['username'], kwargs['target'], subdomain, subdomain_ip)
+
         self.mysqldb.update_scan(kwargs['username'], kwargs['target'], '开始POC检测')
         for ip_port in scan_list:
             for item in self.items:

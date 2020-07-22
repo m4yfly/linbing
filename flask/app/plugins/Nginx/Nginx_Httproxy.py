@@ -9,7 +9,7 @@ Reference: https://mp.weixin.qq.com/s/EtUmfMxxJjYNl7nIOKkRmA
 import re
 import requests
 
-class Nginx_Httproxy_BaseVerify():
+class Nginx_Httproxy_BaseVerify:
     def __init__(self, url):
         self.url = url
         self.headers = {

@@ -7,7 +7,7 @@ description: Redis弱口令漏洞
 import socket
 from urllib.parse import urlparse
 
-class Redis_Weakpwd_BaseVerify():
+class Redis_Weakpwd_BaseVerify:
     def __init__(self, url):
         self.url = url
         url_parse = urlparse(self.url)

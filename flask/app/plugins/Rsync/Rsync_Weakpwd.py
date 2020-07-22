@@ -14,7 +14,7 @@ from urllib.parse import urlparse
 
 
 
-class Rsync_Weakpwd_BaseVerify():
+class Rsync_Weakpwd_BaseVerify:
     def __init__(self, url):
         self.url = url
         self.timeout = 10

@@ -11,7 +11,7 @@ import requests
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
-class Tomcat_Weakpwd_BaseVerify():
+class Tomcat_Weakpwd_BaseVerify:
     def __init__(self, url):
         self.url = url
         self.timeout = 10

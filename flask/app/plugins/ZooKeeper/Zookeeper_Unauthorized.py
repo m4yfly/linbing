@@ -8,7 +8,7 @@ description: Zookeeper 未授权访问漏洞
 from urllib.parse import urlparse
 from kazoo.client import KazooClient
 
-class Zookeeper_Unauthorized_BaseVerify():
+class Zookeeper_Unauthorized_BaseVerify:
     def __init__(self, url):
         self.ip = urlparse(url).hostname
         self.port =urlparse(url).port

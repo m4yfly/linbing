@@ -9,7 +9,7 @@ import time
 import socket
 from urllib.parse import urlparse
 
-class Rsync_Unauthorized_BaseVerify():
+class Rsync_Unauthorized_BaseVerify:
     def __init__(self, url):
         self.url = url
         self.timeout = 10

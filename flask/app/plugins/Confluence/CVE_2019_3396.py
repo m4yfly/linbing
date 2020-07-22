@@ -10,7 +10,7 @@ import requests
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
-class CVE_2019_3396_BaseVerify():
+class CVE_2019_3396_BaseVerify:
     def __init__(self, url):
         self.url = url
         self.filename = "../web.xml"

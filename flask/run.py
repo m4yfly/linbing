@@ -23,7 +23,6 @@ from app.aes import Aes_Crypto
 from app.scan import Port_Scan
 from app.multiplythread import Multiply_Thread
 
-#UPLOAD_FOLDER = '/root/zhenjinote/note/vue/static/images'  #文件存放路径
 UPLOAD_FOLDER = 'images'  #文件存放路径
 if not os.path.exists("images"):
     os.mkdir("images")
@@ -46,6 +45,12 @@ rsa_crypto = Rsa_Crypto()
 port_scan = Port_Scan()
 
 def parse_target(target):
+    """
+    解析目标为ip格式
+
+    :param target: 待解析的目标
+    :return scan_ip: 解析后的ip
+    """
     scan_ip = ''
     try:
         url_result = re.findall('https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+', target)
@@ -72,11 +77,23 @@ def parse_target(target):
     return scan_ip
 
 def allowed_file(filename):
+    """
+    设置允许上传的文件名后缀
+
+    :param filename: 上传的文件名
+    :return:
+    """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/api/query',methods=['POST'])
 def query():
+    """
+    查询的接口,用来查询用户名或者邮箱是否已注册
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -137,6 +154,12 @@ def query():
 
 @app.route('/api/getchecknum', methods = ['POST'])
 def getchecknum ():
+    """
+    获取邮箱验证码
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -167,6 +190,12 @@ def getchecknum ():
 
 @app.route('/api/register',methods=['POST'])
 def register():
+    """
+    注册的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -203,6 +232,12 @@ def register():
 
 @app.route('/api/findpassword',methods=['POST'])
 def findpassword():
+    """
+    找回密码的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -213,9 +248,9 @@ def findpassword():
             password = aes_crypto.encrypt(request_data['password'])
             email = aes_crypto.encrypt(request_data['email'])
             query_str = {
-                    'type': 'email',
-                    'data': email
-                }
+                'type': 'email',
+                'data': email
+            }
             query_result = mysqldb.username(query_str)['username']
             if query_result == 'Z1001':
                 response_data['code'] = 'Z1001'
@@ -255,6 +290,12 @@ def findpassword():
 
 @app.route('/api/login', methods=['POST'])
 def login():
+    """
+    登陆的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -293,6 +334,12 @@ def login():
 
 @app.route('/api/getuserinfo', methods=['POST'])
 def getuserinfo():
+    """
+    获取用户信息的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -332,6 +379,12 @@ def getuserinfo():
 
 @app.route('/api/changepassword',methods=['POST'])
 def changpassword():
+    """
+    修改用户密码的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -388,6 +441,12 @@ def changpassword():
 
 @app.route('/api/save',methods=['POST'])
 def save_target():
+    """
+    保存目标的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -438,6 +497,12 @@ def save_target():
 
 @app.route('/api/scan_set',methods=['POST'])
 def scan_set():
+    """
+    设置扫描选项的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -482,6 +547,12 @@ def scan_set():
 
 @app.route('/api/scan',methods=['POST'])
 def save_scan():
+    """
+    保存扫描选项的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -538,6 +609,12 @@ def save_scan():
 
 @app.route('/api/edit',methods=['POST'])
 def edit():
+    """
+    编辑目标相关信息的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -584,6 +661,12 @@ def edit():
 
 @app.route('/api/targetlist',methods=['POST'])
 def target_list():
+    """
+    获取所有目标的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': '', 'total': ''}
     try:
         if request.method == 'POST':
@@ -641,6 +724,12 @@ def target_list():
 
 @app.route('/api/scanlist',methods=['POST'])
 def scan_list():
+    """
+    获取所有扫描信息的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': '', 'total': ''}
     try:
         if request.method == 'POST':
@@ -698,6 +787,12 @@ def scan_list():
 
 @app.route('/api/vulnerlist',methods=['POST'])
 def vuln_list():
+    """
+    获取所有漏洞信息的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': '', 'total': ''}
     try:
         if request.method == 'POST':
@@ -758,6 +853,12 @@ def vuln_list():
 
 @app.route('/api/detail',methods=['POST'])
 def detail():
+    """
+    获取漏洞详情的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -819,6 +920,12 @@ def detail():
 
 @app.route('/api/setflag',methods=['POST'])
 def set_flag():
+    """
+    设置标识位的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -862,6 +969,12 @@ def set_flag():
 
 @app.route('/api/delete',methods=['POST'])
 def delete():
+    """
+    删除信息的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -907,6 +1020,12 @@ def delete():
 
 @app.route('/api/upload', methods=['GET', 'POST'])
 def upload_file():
+    """
+    上传文件的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':
@@ -959,10 +1078,22 @@ def upload_file():
 
 @app.route('/api/images/<filename>', methods=['GET', 'POST'])
 def get_image(filename):
+    """
+    获取用户头像内容的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     return send_from_directory(UPLOAD_FOLDER, filename)
 
 @app.route('/api/changeavatar',methods=['POST'])
 def change_avatar():
+    """
+    修改用户头像的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
     response_data = {'code': '', 'message': '', 'data': ''}
     try:
         if request.method == 'POST':

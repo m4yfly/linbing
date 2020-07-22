@@ -8,7 +8,7 @@ description: CouchDB弱口令漏洞
 import json
 import requests
 
-class Couchdb_Weakpwd_BaseVerify():
+class Couchdb_Weakpwd_BaseVerify:
     def __init__(self, url):
         self.url = url
         self.headers = {

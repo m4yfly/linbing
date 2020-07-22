@@ -12,7 +12,7 @@ import requests
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
-class CVE_2016_3088_BaseVerify():
+class CVE_2016_3088_BaseVerify:
     def __init__(self, url):
         self.url = url
         self.put_file_path = "/fileserver/tmp_2016.txt"

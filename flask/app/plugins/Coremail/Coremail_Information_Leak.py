@@ -9,7 +9,7 @@ import requests
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
-class Coremail_Information_Leak_BaseVerify():
+class Coremail_Information_Leak_BaseVerify:
     def __init__(self, url):
         self.url = url
         self.headers = {

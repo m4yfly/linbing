@@ -9,7 +9,7 @@ import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-class Glassfish_File_Read_BaseVerify():
+class Glassfish_File_Read_BaseVerify:
     def __init__(self, url):
        self.url = url
        self.headers = {

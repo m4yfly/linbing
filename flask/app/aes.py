@@ -12,6 +12,7 @@ class Aes_Crypto():
         """
         明文使用PKCS7填充
         最终调用AES加密方法时，传入的是一个byte数组，要求是16的整数倍，因此需要对明文进行处理
+
         :param text: 待加密内容(明文)
         :return:
         """
@@ -28,6 +29,7 @@ class Aes_Crypto():
     def pkcs7unpadding(self, text):
         """
         处理使用PKCS7填充过的数据
+
         :param text: 解密后的字符串
         :return:
         """
@@ -41,6 +43,7 @@ class Aes_Crypto():
         key,iv使用同一个
         模式cbc
         填充pkcs7
+
         :param key: 密钥
         :param content: 加密内容
         :return:
@@ -60,6 +63,7 @@ class Aes_Crypto():
         key,iv使用同一个
         模式cbc
         去填充pkcs7
+        
         :param key:
         :param content:
         :return:

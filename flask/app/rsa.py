@@ -34,6 +34,12 @@ class Rsa_Crypto():
 
 
     def encrypt(self, content):
+        """
+        进行rsa加密
+
+        :param content: 待加密字符串
+        :return result: 加密后的字符串
+        """
         content = content.encode('utf-8')
         length = len(content)
         default_length = 117
@@ -52,9 +58,16 @@ class Rsa_Crypto():
                 res.append(pubobj.encrypt(content[offset:]))
             offset += default_length
         byte_data = b''.join(res)
-        return base64.b64encode(byte_data).decode('utf-8')
+        result = base64.b64encode(byte_data).decode('utf-8')
+        return result
 
     def decrypt(self, content):
+        """
+        进行rsa解密
+
+        :param content: 待解密字符串
+        :return result: 解密后的字符串
+        """
         content = base64.b64decode(content)
         length = len(content)
         default_length = 128
@@ -72,35 +85,8 @@ class Rsa_Crypto():
             else:
                 res.append(priobj.decrypt(content[offset:], b'xyz'))
             offset += default_length
-
-        return b''.join(res).decode('utf8')
-
-    def decrypt_sd(self, content):
-        # 私钥解密
-        priobj = Cipher_pkcs1_v1_5.new(RSA.importKey(self.rsa_private_key))
-        # 长度不用分段
-        result = b''.join(priobj.decrypt(content, b'xyz'))
-        print(result)
+        result = b''.join(res).decode('utf8')
         return result
-
-    def decrypt_long(self, content):
-        content = base64.b64decode(content)
-        length = len(content)
-        default_length = 128
-        # 长度不用分段
-        offset = 0
-        res = []
-        while length - offset > 0:
-            if length - offset > default_length:
-                res.append(content[offset:offset + default_length])
-            else:
-                res.append(content[offset:])
-            offset += default_length
-        for item in res:
-            print(item)
-            plain_text = self.decrypt_sd(item)
-            print(plain_text)
-        return b''.join(res).decode('utf8')
 
 if __name__ == '__main__':
     crypto = Rsa_Crypto()

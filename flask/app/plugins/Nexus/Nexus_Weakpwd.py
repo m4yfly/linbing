@@ -10,7 +10,7 @@ import requests
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
-class Nexus_Weakwd_BaseVerify():
+class Nexus_Weakwd_BaseVerify:
     def __init__(self, url):
         self.url = url
         self.headers = {

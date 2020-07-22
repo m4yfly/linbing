@@ -13,7 +13,7 @@ import requests
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
-class CVE_2017_12635_BaseVerify():
+class CVE_2017_12635_BaseVerify:
     def __init__(self, url):
         self.url = url
         self.capta=''

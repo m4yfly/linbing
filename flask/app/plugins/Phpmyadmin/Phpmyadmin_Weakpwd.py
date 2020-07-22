@@ -11,7 +11,7 @@ import requests
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
-class Phpmyadmin_Weakpwd_BaseVerify():
+class Phpmyadmin_Weakpwd_BaseVerify:
     def __init__(self, url):
         self.url = url
         self.headers = {

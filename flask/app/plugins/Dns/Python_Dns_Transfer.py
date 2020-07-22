@@ -13,7 +13,7 @@ import struct
 import random
 from urllib.parse import urlparse
 
-class Python_Dns_Transfer_BaseVerify():
+class Python_Dns_Transfer_BaseVerify:
     def __init__(self, url):
         self.url = url
         url_parse = urlparse(self.url)

@@ -9,7 +9,7 @@ import os
 import re
 from urllib.parse import urlparse
 
-class Dns_Transfer_BaseVerify():
+class Dns_Transfer_BaseVerify:
     def __init__(self, url):
         self.url = url
         url_parse = urlparse(self.url)

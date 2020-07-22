@@ -9,7 +9,7 @@ import time
 import paramiko
 from urllib.parse import urlparse
 
-class Ssh_Weakpwd_BaseVerify():
+class Ssh_Weakpwd_BaseVerify:
     def __init__(self, url):
         self.url = url
         self.timeout = 3
