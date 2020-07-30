@@ -41,9 +41,9 @@ class Multiply_Thread():
     def run(self, *args, **kwargs):
         scan_set = self.mysqldb.get_scan(kwargs['username'], kwargs['target'])
         if scan_set['scanner'] == 'nmap':
-            scan_list = self.port_scan.nmap_scan(kwargs['username'], kwargs['target'], kwargs['target_ip'], scan_set['min_port'], scan_set['max_port'])
+            scan_list = self.port_scan.nmap_scan(kwargs['username'], kwargs['target'], kwargs['scan_ip'], scan_set['min_port'], scan_set['max_port'])
         else:
-            scan_list = self.port_scan.masscan_scan(kwargs['username'], kwargs['target'], kwargs['target_ip'], scan_set['min_port'], scan_set['max_port'], scan_set['rate'])
+            scan_list = self.port_scan.masscan_scan(kwargs['username'], kwargs['target'], kwargs['scan_ip'], scan_set['min_port'], scan_set['max_port'], scan_set['rate'])
         self.mysqldb.update_scan(kwargs['username'], kwargs['target'], '开始POC检测')
         for ip_port in scan_list:
             for item in self.items:
