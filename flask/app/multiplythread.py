@@ -48,27 +48,28 @@ class Multiply_Thread():
         for ip_port in scan_list:
             for item in self.items:
                 poc_path = os.path.join(self.plugin_path, item)
-                poc_items = os.listdir(poc_path)
-                for poc_item in poc_items:
-                    if poc_item.endswith(".py") and not poc_item.startswith('__'):
-                        plugin_name = poc_item[:-3]
-                        module = importlib.import_module('app.plugins.' + item + '.' + plugin_name)
-                        try:
-                            class_name = plugin_name + '_BaseVerify'
-                            url = 'http://' + ip_port
-                            get_class = getattr(module, class_name)(url)
-                            result = get_class.run()
-                            if result:
-                                if not self.get_vulnerability(kwargs['username'], kwargs['target'], self.aes_crypto.encrypt(ip_port), self.aes_crypto.encrypt(plugin_name)):
-                                    self.mysqldb.save_vulnerability(kwargs['username'], kwargs['target'], self.aes_crypto.encrypt(plugin_name), self.aes_crypto.encrypt(ip_port), self.aes_crypto.encrypt(plugin_name), self.aes_crypto.encrypt(plugin_name))
+                if '.py' not in poc_path:
+                    poc_items = os.listdir(poc_path)
+                    for poc_item in poc_items:
+                        if poc_item.endswith(".py") and not poc_item.startswith('__'):
+                            plugin_name = poc_item[:-3]
+                            module = importlib.import_module('app.plugins.' + item + '.' + plugin_name)
+                            try:
+                                class_name = plugin_name + '_BaseVerify'
+                                url = 'http://' + ip_port
+                                get_class = getattr(module, class_name)(url)
+                                result = get_class.run()
+                                if result:
+                                    if not self.get_vulnerability(kwargs['username'], kwargs['target'], self.aes_crypto.encrypt(ip_port), self.aes_crypto.encrypt(plugin_name)):
+                                        self.mysqldb.save_vulnerability(kwargs['username'], kwargs['target'], self.aes_crypto.encrypt(plugin_name), self.aes_crypto.encrypt(ip_port), self.aes_crypto.encrypt(plugin_name), self.aes_crypto.encrypt(plugin_name))
+                                    else:
+                                        self.update_vulnerability(kwargs['username'], kwargs['target'], self.aes_crypto.encrypt(ip_port), self.aes_crypto.encrypt(plugin_name))
                                 else:
-                                    self.update_vulnerability(kwargs['username'], kwargs['target'], self.aes_crypto.encrypt(ip_port), self.aes_crypto.encrypt(plugin_name))
-                            else:
+                                    pass
+                            except:
                                 pass
-                        except:
-                            pass
-                    else:
-                        continue
+                        else:
+                            continue
         self.mysqldb.update_scan(kwargs['username'], kwargs['target'], '扫描结束')
 
 if __name__ == '__main__':
