@@ -88,7 +88,7 @@
 
 #### 配置uwsgi
 
-> 把uwsgi.ini文件放到flask文件夹的根目录下(我的flask文件夹路径是/root/flask,如果各位不是这个路径,需要到uwsgi.ini文件中修改文件的路径)
+> 把uwsgi.ini文件放到flask文件夹的根目录下(我的flask文件夹路径是/root/flask,如果各位不是这个路径,需要到uwsgi.ini文件和flask.conf中修改文件的路径)
 
 #### 启动uwsgi
 
