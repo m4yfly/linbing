@@ -91,7 +91,7 @@ class Mysql_db():
         :return:
         """
         flag = 0
-        sql = "create table target (id integer auto_increment primary key, username varchar(50), target varchar(50), description varchar(255), target_ip varchar(50), domain varchar(50), create_time varchar(50), scan_time varchar(50), scan_schedule varchar(50), vulner_number varchar(50), scan_status varchar(50), trash_flag varchar(50), scanner varchar(50), min_port varchar(50), max_port varchar(50), rate varchar(50)) engine = innodb default charset = utf8;"
+        sql = "create table target (id integer auto_increment primary key, username varchar(50), target varchar(50), description varchar(255), target_ip varchar(50), create_time varchar(50), scan_time varchar(50), scan_schedule varchar(50), vulner_number varchar(50), scan_status varchar(50), trash_flag varchar(50), scanner varchar(50), min_port varchar(50), max_port varchar(50), rate varchar(50)) engine = innodb default charset = utf8;"
         try:
             conn=self.get_conn()
             cursor=conn.cursor(cursor=pymysql.cursors.DictCursor)
@@ -422,7 +422,7 @@ class Mysql_db():
             cursor.close()
             self.close_conn
 
-    def save_target(self, username, target, description, target_ip, domain):
+    def save_target(self, username, target, description, target_ip):
         """
         保存目标
 
@@ -430,11 +430,10 @@ class Mysql_db():
         :param: target: 目标
         :param: description: 描述字符串
         :param: target_ip: 目标ip
-        :param: domain: 域名
         :return: 'ZXXXXX': 状态码
         """
         datetime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        sql =  "insert target (username, target, description, target_ip, domain, create_time, scan_time, scan_schedule, vulner_number, scan_status, trash_flag, scanner, min_port, max_port, rate) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (username, target, description, target_ip, domain, datetime, '0', '未开始', '0', '0', '0', 'nmap', '1', '65535', '1000')
+        sql =  "insert target (username, target, description, target_ip, create_time, scan_time, scan_schedule, vulner_number, scan_status, trash_flag, scanner, min_port, max_port, rate) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (username, target, description, target_ip, datetime, '0', '未开始', '0', '0', '0', 'nmap', '1', '65535', '1000')
         try:
             conn=self.get_conn()
             cursor=conn.cursor(cursor=pymysql.cursors.DictCursor)

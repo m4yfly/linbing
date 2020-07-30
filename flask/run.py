@@ -476,7 +476,7 @@ def save_target():
                 response_data['message'] = '认证失败'
                 return str(response_data)
             else:
-                save_result = mysqldb.save_target(username_result['username'], target, description)
+                save_result = mysqldb.save_target(username_result['username'], target, description, scan_ip)
                 if save_result == 'Z1000':
                     response_data['code'] = 'Z1000'
                     response_data['message'] = '请求正常'
