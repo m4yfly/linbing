@@ -5,7 +5,7 @@ from Crypto import Random
 from Crypto.Cipher import PKCS1_v1_5 as Cipher_pkcs1_v1_5
 from Crypto.PublicKey import RSA
 
-class Rsa_Crypto():
+class Rsa_Crypto():  
     def __init__(self):
         self.rsa_private_key = """-----BEGIN RSA PRIVATE KEY-----
         MIICXQIBAAKBgQC+UHO/FX+mqq68COGYqk82/3xw7vfhNJIM58lrjI0T+zXIx6As
