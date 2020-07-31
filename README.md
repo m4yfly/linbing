@@ -84,7 +84,7 @@
 
 > yum install -y uwsgi
 
-> yum install uwsgi-plugin-python3
+> yum install uwsgi-plugin-python3(安装的这个包的版本要和python的版本保持一致)
 
 #### 配置uwsgi
 
