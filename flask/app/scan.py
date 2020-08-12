@@ -36,7 +36,7 @@ class Port_Scan():
                         version = nm[host][nmap_proto][int(nmap_port)]['version']
                         if not self.mysqldb.get_target_port(username, target, nmap_port):
                             self.mysqldb.save_target_port(username, target, nmap_port, protocol, product, version)
-                         else:
+                        else:
                             self.mysqldb.update_target_port(username, target, nmap_port, protocol, product, version)
                         scan_list.append(str(host) + ':' + str(nmap_port))
             print('Nmap scanned.....')

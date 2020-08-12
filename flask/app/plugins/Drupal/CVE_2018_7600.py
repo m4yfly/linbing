@@ -40,7 +40,7 @@ class CVE_2018_7600_BaseVerify:
             pass
 
 if  __name__ == "__main__":
-    CVE_2018_7600 = CVE_2018_7600_BaseVerify('127.0.0.1:8080')
+    CVE_2018_7600 = CVE_2018_7600_BaseVerify('https://www.tfzx.net')
     CVE_2018_7600.run()
 
 

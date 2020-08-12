@@ -14,8 +14,8 @@ class MailSender:
     def __init__(self,cc_mail = None):
         self.smtpserver = "smtp.qq.com"
         self.smtpport = 465
-        self.password = "1234567890123456" #16位的QQ邮箱授权码
-        self.from_mail = "32324242@qq.com" #发送邮件的QQ邮箱账号
+        self.password = "123456789" #16位的QQ邮箱授权码
+        self.from_mail = "123456789@qq.com" #发送邮件的QQ邮箱账号
         self.cc_mail = cc_mail
         self.subject = "欢迎注册临兵漏洞扫描系统"
         self.from_name = "欢迎注册临兵漏洞扫描系统"

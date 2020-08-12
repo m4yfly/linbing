@@ -78,9 +78,9 @@
 
 #### 安装uwsgi
 
-> yum install -y libpq-dev
+> yum install -y postgresql-devel(debian系安装libpq-dev)
 
-> yum install -y python3-dev
+> yum install -y python3-devel(debian系安装python3-dev)
 
 > yum install -y uwsgi
 
@@ -93,6 +93,20 @@
 #### 启动uwsgi
 
 > 进入到/root/flask/目录下,uwsgi --ini uwsgi.ini(uwsgi文件的路径)
+
+## docker部署
+
+### 配置
+
+> 首先下载项目到本地(https://github.com/taomujian/linbing.git),然后配置flask/app/sendmail.py中发送邮件所用的账号和授权码,然后修改flask/app/mysql.py的mysql数据库账号密码,这个账号密码要和dockerfile中的设置的账号密码保持一致
+
+### 编译镜像(进入项目根目录)
+
+> docker build -t linbing .
+
+### 启动容器(进入项目根目录)
+
+> docker run -it -d -p 11000:11000 linbing 
 
 ## 访问
 
