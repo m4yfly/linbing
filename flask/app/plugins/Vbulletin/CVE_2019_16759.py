@@ -16,7 +16,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 class CVE_2019_16759_BaseVerify:
      def __init__(self, url):
           self.url = url
-          self.capta='' 
+          self.capta = '' 
           words=''.join((string.ascii_letters,string.digits))
           for i in range(8):
                self.capta = self.capta + random.choice(words) 
