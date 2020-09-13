@@ -455,14 +455,8 @@ def save_target():
             request_data = request.form.to_dict()
             request_data = rsa_crypto.decrypt(request_data['data'])
             request_data = json.loads(request_data)
-            target = request_data['target']
-            scan_ip = parse_target(target)
-            if not scan_ip:
-                response_data['code'] = 'Z1020'
-                response_data['message'] = '添加的目标无法解析,请重新输入'
-                return str(response_data)
-            target = aes_crypto.encrypt(request_data['target'])
-            description = aes_crypto.encrypt(request_data['description'])
+            target_data = request_data['target']
+            target_list = target_data.split(';')
             token = request_data['token']
             query_str = {
                     'type': 'token',
@@ -478,15 +472,24 @@ def save_target():
                 response_data['message'] = '认证失败'
                 return str(response_data)
             else:
-                save_result = mysqldb.save_target(username_result['username'], target, description, scan_ip)
-                if save_result == 'Z1000':
-                    response_data['code'] = 'Z1000'
-                    response_data['message'] = '请求正常'
-                    return str(response_data)
-                else :
-                    response_data['code'] = 'Z1001'
-                    response_data['message'] = '系统异常'
-                    return str(response_data)
+                for target in target_list:
+                    scan_ip = parse_target(target)
+                    if not scan_ip:
+                        response_data['code'] = 'Z1020'
+                        response_data['message'] = '添加的目标无法解析,请重新输入'
+                        return str(response_data)
+                    target = aes_crypto.encrypt(target)
+                    description = aes_crypto.encrypt(request_data['description'])
+                    save_result = mysqldb.save_target(username_result['username'], target, description, scan_ip)
+                    if save_result == 'Z1000':
+                        pass
+                    else :
+                        response_data['code'] = 'Z1001'
+                        response_data['message'] = '系统异常'
+                        return str(response_data)
+                response_data['code'] = 'Z1000'
+                response_data['message'] = '请求正常'
+                return str(response_data)
         else:
             response_data['code'] = 'Z1002'
             response_data['message'] = '请求方法异常'
@@ -1137,5 +1140,5 @@ def change_avatar():
         return str(response_data)
 
 if __name__ == '__main__':
-    #app.run(debug = True, port= 5000)
+    # app.run(debug = True, port= 5000)
     app.run(host='0.0.0.0', port= 8000)

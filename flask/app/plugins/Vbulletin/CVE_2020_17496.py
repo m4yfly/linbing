@@ -6,7 +6,7 @@ import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-class CVE_2019_16759_Bypass_BaseVerify:
+class CVE_2020_17496_BaseVerify:
      def __init__(self, url):
           self.url = url
           if not self.url.startswith("http") and not self.url.startswith("https"):
@@ -78,5 +78,5 @@ class CVE_2019_16759_Bypass_BaseVerify:
                pass
 
 if  __name__ == "__main__":
-    CVE_2019_16759_Bypass = CVE_2019_16759_Bypass_BaseVerify('http://127.0.0.1')
-    print(CVE_2019_16759_Bypass.run())
+    CVE_2020_17496 = CVE_2020_17496_BaseVerify('http://127.0.0.1')
+    print(CVE_2020_17496.run())

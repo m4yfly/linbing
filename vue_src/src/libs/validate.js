@@ -62,28 +62,33 @@ export function isusername (rule, value, callback) {
 
 /* 新建目标时的规则 */
 export function istarget (rule, value, callback) {
-    let data = {
-        'type': 'target',
-        'data': {
-            'data': value,
-            'token': getToken()
+    value = value.split(/[(\r\n)\r\n]+/);
+    for (var i=0; i<value.length; i++)
+    {
+        let data = {
+            'type': 'target',
+            'data': {
+                'data': value[i],
+                'token': getToken()
+            }
         }
+        data = JSON.stringify(data)
+        let params = {'data': RSA.Encrypt(data)}
+        http.post('/api/query', params).then((res) => {
+            res.data = eval('(' + res.data + ')');
+            switch(res.data.code ){
+                case 'Z1001':
+                return callback(new Error('系统异常'))
+                case 'Z1002':
+                return callback(new Error('请求方法异常'))
+                case 'Z10010':
+                return callback(new Error('目标已存在,请不要重复添加目标,如已删除请在垃圾箱内恢复'))
+                default:
+                callback()
+            }
+        })
     }
-    data = JSON.stringify(data)
-    let params = {'data': RSA.Encrypt(data)}
-    http.post('/api/query', params).then((res) => {
-        res.data = eval('(' + res.data + ')');
-        switch(res.data.code ){
-            case 'Z1001':
-            return callback(new Error('系统异常'))
-            case 'Z1002':
-            return callback(new Error('请求方法异常'))
-            case 'Z10010':
-            return callback(new Error('目标已存在,请不要重复添加目标,如已删除请在垃圾箱内恢复'))
-            default:
-            callback()
-        }
-    })
+    
   }
 
 export function loginusername (rule, value, callback) {

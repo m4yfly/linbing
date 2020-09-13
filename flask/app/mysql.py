@@ -10,7 +10,7 @@ class Mysql_db():
 
     __v=None
 
-    def __init__(self, host = "127.0.0.1", port = 3306, user = "root", passwd = "1234567", charset = "utf8" , maxconn = 10):
+    def __init__(self, host = "127.0.0.1", port = 3306, user = "root", passwd = "123456", charset = "utf8" , maxconn = 20):
         self.host, self.port, self.user, self.passwd, self.charset = host, port, user, passwd, charset
 
     def get_conn(self):

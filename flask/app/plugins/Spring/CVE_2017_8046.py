@@ -36,7 +36,7 @@ class CVE_2017_8046_BaseVerify:
                 print("存在CVE-2017-8046漏洞,已在目标服务器的根目录下生成了test.jsp文件！")
                 return True
             else:
-                print("存在CVE-2017-8046漏洞")
+                print("不存在存在CVE-2017-8046漏洞")
                 return False
         except Exception as e:
             print(e)

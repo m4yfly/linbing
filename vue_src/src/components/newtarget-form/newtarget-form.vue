@@ -1,5 +1,5 @@
 <template>
-  <Form ref = "NewtargetForm" :model="form" :rules="rules" @keydown.enter.native="handleSubmit">
+  <Form ref = "NewtargetForm" :model="form" :rules="rules" @submit.native.prevent>
     <FormItem prop="target">
       <Input type="textarea" v-model="form.target" placeholder="请输入目标,格式如10.0.0.1或http://xxx.com或10.0.0.0/24">
         <span slot="prepend">
@@ -24,7 +24,7 @@
 import {istarget} from '@/libs/validate'
 import RSA  from '@/libs/crypto'
 import http  from '@/libs/http'
-import {getToken } from '@/libs/util'
+import {getToken} from '@/libs/util'
 export default {
   name: 'NewtargetForm',
   props: {
@@ -51,7 +51,7 @@ export default {
       form: {
         target: '',
         description: ''
-      }
+      },
     }
   },
   computed: {
@@ -66,6 +66,7 @@ export default {
     handleSubmit () {
      this.$refs.NewtargetForm.validate( (valid) => {
         if (valid) {
+            this.form.target = this.form.target.split(/[(\r\n)\r\n]+/).join(';')
             this.$emit('on-success-valid', {
               target: this.form.target,
               description: this.form.description,
