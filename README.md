@@ -2,9 +2,11 @@
 
 > 本系统是对目标进行漏洞扫描的一个系统,前端采用vue技术,后端采用flask.核心原理是扫描主机的开放端口情况,然后根据端口情况逐个去进行poc检测,poc有110多个,包含绝大部分的中间件漏洞,本系统的poc皆来源于网络或在此基础上进行修改,在centons7环境下使用nginx和uwsgi部署,部署起来可能有点麻烦,烦请多点耐心,在腾讯云centos7上测试成功
 
-## 安装python3依赖库
+## 安装python3依赖库(使用python3.8开发)
 
 > pip3 install -r requirements.txt
+
+> 如果你使用的是低于python3.8版本的python3,请把run.py文件中第16行注释掉,并把第17行注释去掉
 
 ## 打包vue源代码(进入到vue_src目录下)
 
