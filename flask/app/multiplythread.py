@@ -8,6 +8,7 @@ import importlib
 from app.scan import Port_Scan
 from app.mysql import Mysql_db
 from app.aes import Aes_Crypto
+from app.oneforall.oneforall import OneForAll
 
 class Multiply_Thread():
     def __init__(self):
@@ -38,12 +39,26 @@ class Multiply_Thread():
         thread.start()
         return thread
 
+
+    def sub_domain(self, username, target, description, domain):
+        oneforall = OneForAll(domain)
+        datas = oneforall.run()
+        for domain in datas:
+            self.mysqldb.save_target_domain(username, target, description, self.aes_crypto.encrypt(domain['subdomain']), self.aes_crypto.encrypt(domain['ip']))
+            #print(domain['alive'])
+            #print(domain['port'])
+            #print(domain['cdn'])
+            #print(domain['title'])
+            #print(domain['banner'])
+
     def run(self, *args, **kwargs):
         scan_set = self.mysqldb.get_scan(kwargs['username'], kwargs['target'])
+        if kwargs['domain']:
+            self.sub_domain(kwargs['username'], kwargs['target'], kwargs['description'], kwargs['domain'][0])
         if scan_set['scanner'] == 'nmap':
-            scan_list = self.port_scan.nmap_scan(kwargs['username'], kwargs['target'], kwargs['scan_ip'], scan_set['min_port'], scan_set['max_port'])
+            scan_list = self.port_scan.nmap_scan(kwargs['username'], kwargs['target'], kwargs['description'], kwargs['scan_ip'], scan_set['min_port'], scan_set['max_port'])
         else:
-            scan_list = self.port_scan.masscan_scan(kwargs['username'], kwargs['target'], kwargs['scan_ip'], scan_set['min_port'], scan_set['max_port'], scan_set['rate'])
+            scan_list = self.port_scan.masscan_scan(kwargs['username'], kwargs['target'], kwargs['description'], kwargs['scan_ip'], scan_set['min_port'], scan_set['max_port'], scan_set['rate'])
         self.mysqldb.update_scan(kwargs['username'], kwargs['target'], '开始POC检测')
         for ip_port in scan_list:
             for item in self.items:

@@ -69,7 +69,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 250,
+          width: 300,
           resizable: true,
           align: 'center',
           render: (h, params) => {
@@ -80,17 +80,45 @@ export default {
                         size: 'small'
                     },
                     style: {
+                        marginRight: '10px'
+                    },
+                    on: {
+                        click: () => {
+                            this.subdomain(params)
+                        }
+                    }
+                }, '子域名详情'),
+                h('Button', {
+                    props: {
+                        type: 'primary',
+                        size: 'small'
+                    },
+                    style: {
+                        marginRight: '10px'
+                    },
+                    on: {
+                        click: () => {
+                            this.port(params)
+                        }
+                    }
+                }, '端口详情'),
+                h('Button', {
+                    props: {
+                        type: 'primary',
+                        size: 'small'
+                    },
+                    style: {
                         marginRight: '20px'
                     },
                     on: {
                         click: () => {
-                            this.show(params)
+                            this.vuln(params)
                         }
                     }
                 }, '漏洞详情')
             ]);
+          }
         }
-      }
       ],
       tableData: []
     }
@@ -143,7 +171,26 @@ export default {
         }
       })
     },
-    show (params) {
+
+    subdomain (params) {
+      this.$router.push({
+        name:'子域名详情',
+        query:{
+          params : params['row']['target']
+        }
+      })
+    },
+
+    port (params) {
+      this.$router.push({
+        name:'端口详情',
+        query:{
+          params : params['row']['target']
+        }
+      })
+    },
+    
+    vuln (params) {
       this.$router.push({
         name:'漏洞详情',
         query:{
@@ -151,15 +198,18 @@ export default {
         }
       })
     },
+
     handlePage (pageNum) {
       this.page.pageNum = pageNum
       this.getTableData()
     },
+
     handlePageSize (pageSize) {
       this.page.pageSize = pageSize
       this.getTableData()
     }
   },
+  
   mounted () {
     this.getTableData()
     setInterval(this.getTableData, 60000)

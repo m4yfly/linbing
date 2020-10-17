@@ -185,6 +185,7 @@ export default {
     scan (params) {
       let data = {
         'target': params.row.target,
+        'description': params.row.description,
         'token': this.token.trim()
       }
       data = JSON.stringify(data)

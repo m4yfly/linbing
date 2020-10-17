@@ -49,5 +49,5 @@ class Thinkphp5_5_0_23_BaseVerify:
             pass
 
 if  __name__ == "__main__":
-    Thinkphp5_5_0_23 = Thinkphp5_5_0_23_BaseVerify('http://10.3.3.196/oversea_test/public/index.php')
+    Thinkphp5_5_0_23 = Thinkphp5_5_0_23_BaseVerify('http://192.168.100.64/public/')
     Thinkphp5_5_0_23.run()

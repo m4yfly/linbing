@@ -112,6 +112,25 @@
 
 > 访问<http://yourip:11000/login>即可
 
+## CHANGELOG
+
+### [v1.0] 2020.2.28
+- 初步完成扫描器功能
+
+### [v1.1] 2020.7.28
+- 新增F5 BIG IP插件
+
+### [v1.2] 2020.8.12
+- 增加docker部署
+
+### [v1.3] 2020.9.13
+- 增加phpstudy_back_rce插件数量
+- 添加目标时可添加多行目标
+
+### [v1.4] 2020.10.18
+- 增加查看端口详情(端口、协议、产品、版本)
+- 增加子域名详情(子域名,子域名ip),子域名是用的oneforall工具
+
 ## 致谢
 
 > 感谢vulhub项目提供的靶机环境:<https://github.com/vulhub/vulhub>,还有<https://hub.docker.com/r/2d8ru/struts2>

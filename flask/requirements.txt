@@ -1,3 +1,4 @@
+-i https://mirrors.aliyun.com/pypi/simple/
 cx-Oracle
 dnspython
 Flask
@@ -17,4 +18,25 @@ urllib3
 uwsgi
 Werkzeug
 psycopg2
-
+beautifulsoup4
+bs4
+certifi
+chardet
+colorama ; sys_platform == 'win32'
+exrex
+fire
+future
+idna
+loguru
+pysocks
+requests-file
+six
+soupsieve
+sqlalchemy
+tenacity
+termcolor
+tldextract
+tqdm
+treelib
+urllib3
+win32-setctime ; sys_platform == 'win32'

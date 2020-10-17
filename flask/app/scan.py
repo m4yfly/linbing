@@ -3,12 +3,14 @@
 import nmap
 import masscan
 from app.mysql import Mysql_db
+from app.aes import Aes_Crypto
 
 class Port_Scan():
     def __init__(self):
         self.mysqldb = Mysql_db()
+        self.aes_crypto = Aes_Crypto()
 
-    def nmap_scan(self, username, target, target_ip, min_port, max_port):
+    def nmap_scan(self, username, target, description, target_ip, min_port, max_port):
         """
         用nmap进行扫描
 
@@ -35,9 +37,9 @@ class Port_Scan():
                         product = nm[host][nmap_proto][int(nmap_port)]['product']
                         version = nm[host][nmap_proto][int(nmap_port)]['version']
                         if not self.mysqldb.get_target_port(username, target, nmap_port):
-                            self.mysqldb.save_target_port(username, target, nmap_port, protocol, product, version)
+                            self.mysqldb.save_target_port(username, target, description, self.aes_crypto.encrypt(str(nmap_port)), self.aes_crypto.encrypt(protocol), self.aes_crypto.encrypt(product), self.aes_crypto.encrypt(version))
                         else:
-                            self.mysqldb.update_target_port(username, target, nmap_port, protocol, product, version)
+                            self.mysqldb.update_target_port(username, target, description, self.aes_crypto.encrypt(str(nmap_port)), self.aes_crypto.encrypt(protocol), self.aes_crypto.encrypt(product), self.aes_crypto.encrypt(version))
                         scan_list.append(str(host) + ':' + str(nmap_port))
             print('Nmap scanned.....')
             self.mysqldb.update_scan(username, target, '端口扫描结束')
@@ -48,7 +50,7 @@ class Port_Scan():
             pass
         return scan_list
 
-    def masscan_scan(self, username, target, target_ip, min_port, max_port, rate):
+    def masscan_scan(self, username, target, description, target_ip, min_port, max_port, rate):
         """
         用masscan进行扫描
 
@@ -77,9 +79,9 @@ class Port_Scan():
                             product = nm[host][nmap_proto][int(masscan_port)]['product']
                             version = nm[host][nmap_proto][int(masscan_port)]['version']
                             if not self.mysqldb.get_target_port(username, target, masscan_port):
-                                self.mysqldb.save_target_port(username, target, masscan_port, protocol, product, version)
+                                self.mysqldb.save_target_port(username, target, description, self.aes_crypto.encrypt(str(masscan_port)), self.aes_crypto.encrypt(protocol), self.aes_crypto.encrypt(product), self.aes_crypto.encrypt(version))
                             else:
-                                self.mysqldb.update_target_port(username, target, masscan_port, protocol, product, version)
+                                self.mysqldb.update_target_port(username, target, description, self.aes_crypto.encrypt(str(masscan_port)), self.aes_crypto.encrypt(protocol), self.aes_crypto.encrypt(product), self.aes_crypto.encrypt(version))
                             scan_list.append(str(host) + ':' + str(masscan_port))
             print('Masscan scanned.....\n')
             self.mysqldb.update_scan(username, target, '端口扫描结束')

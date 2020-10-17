@@ -4,8 +4,8 @@ import os
 import re
 import sys
 import json
-import random
 import time
+import random
 import string 
 import socket
 import hashlib
@@ -13,8 +13,8 @@ from IPy import IP
 from urllib.parse import urlparse
 from flask_cors import *
 from flask import Flask, request, redirect,url_for, send_from_directory
-#from werkzeug import SharedDataMiddleware
-from werkzeug.middleware.shared_data import SharedDataMiddleware
+from werkzeug import SharedDataMiddleware
+#from werkzeug.middleware.shared_data import SharedDataMiddleware
 from werkzeug.utils import secure_filename
 from app.mysql import Mysql_db
 from app.sendmail import MailSender
@@ -51,9 +51,10 @@ def parse_target(target):
     解析目标为ip格式
 
     :param target: 待解析的目标
-    :return scan_ip: 解析后的ip
+    :return scan_ip: 解析后的ip和域名
     """
     scan_ip = ''
+    domain_result = ''
     try:
         url_result = re.findall('https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+', target)
         if url_result == []:
@@ -71,12 +72,14 @@ def parse_target(target):
                 scan_ip = ip_result[0]
         else:
             url_parse = urlparse(target)
+            domain_regex = re.compile(r'(?:[A-Z0-9_](?:[A-Z0-9-_]{0,247}[A-Z0-9])?\.)+(?:[A-Z]{2,6}|[A-Z0-9-]{2,}(?<!-))\Z', re.IGNORECASE)
+            domain_result = domain_regex.findall(url_parse.netloc)
             scan_ip = url_parse.hostname
     except Exception as e:
         print(e)
     finally:
         pass
-    return scan_ip
+    return scan_ip, domain_result
 
 def allowed_file(filename):
     """
@@ -473,7 +476,7 @@ def save_target():
                 return str(response_data)
             else:
                 for target in target_list:
-                    scan_ip = parse_target(target)
+                    scan_ip = parse_target(target)[0]
                     if not scan_ip:
                         response_data['code'] = 'Z1020'
                         response_data['message'] = '添加的目标无法解析,请重新输入'
@@ -551,9 +554,9 @@ def scan_set():
         return str(response_data)
 
 @app.route('/api/scan',methods=['POST'])
-def save_scan():
+def start_scan():
     """
-    保存扫描选项的接口
+    开始扫描的接口
 
     :param:
     :return response_data: 需要返回的数据
@@ -565,6 +568,7 @@ def save_scan():
             request_data = rsa_crypto.decrypt(request_data['data'])
             request_data = json.loads(request_data)
             target = aes_crypto.encrypt(request_data['target'])
+            description = aes_crypto.encrypt(request_data['description'])
             token = request_data['token']
             query_str = {
                 'type': 'token',
@@ -581,17 +585,20 @@ def save_scan():
                 return str(response_data)
             else:
                 target = aes_crypto.decrypt(target)
-                scan_ip = parse_target(target)
+                scan_ip = parse_target(target)[0]
+                domain = parse_target(target)[1]
                 if not scan_ip:
                     response_data['code'] = 'Z1020'
                     response_data['message'] = '添加的目标无法解析,请重新输入'
                     return str(response_data)
-                save_result = mysqldb.save_scan(username_result['username'], aes_crypto.encrypt(target))
+                save_result = mysqldb.start_scan(username_result['username'], aes_crypto.encrypt(target))
                 multiply_thread = Multiply_Thread()
                 scan_data = {
                     'username': username_result['username'],
                     'target': aes_crypto.encrypt(target),
-                    'scan_ip': scan_ip
+                    'description': description,
+                    'scan_ip': scan_ip,
+                    'domain': domain
                 }
                 multiply_thread.async_exe(multiply_thread.run, (), scan_data)
                 if save_result == 'Z1000':
@@ -856,8 +863,144 @@ def vuln_list():
         response_data['message'] = '系统异常'
         return str(response_data)
 
-@app.route('/api/detail',methods=['POST'])
-def detail():
+@app.route('/api/domaindetail',methods=['POST'])
+def doamin_detail():
+    """
+    获取域名详情的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
+    response_data = {'code': '', 'message': '', 'data': ''}
+    try:
+        if request.method == 'POST':
+            request_data = request.form.to_dict()
+            request_data = rsa_crypto.decrypt(request_data['data'])
+            request_data = json.loads(request_data)
+            pagenum = request_data['pagenum']
+            pagesize = request_data['pagesize']
+            target = request_data['target']
+            target = aes_crypto.encrypt(target)
+            token  = request_data['token']
+            query_str = {
+                'type': 'token',
+                'data': token
+            }
+            username_result = mysqldb.username(query_str)
+            if username_result == 'Z1001':
+                response_data['code'] = 'Z1001'
+                response_data['message'] = '系统异常'
+                return str(response_data)
+            elif username_result == None:
+                response_data['code'] = 'Z1004'
+                response_data['message'] = '认证失败'
+                return str(response_data)
+            else:
+                sql_result = mysqldb.target_domain_list(username_result['username'], target, pagenum, pagesize)
+                domain_list = sql_result['result']
+                total = sql_result['total']
+                if domain_list == None:
+                    response_data['code'] = 'Z1009'
+                    response_data['message'] = '数据为空'
+                elif domain_list == 'Z1001':
+                    response_data['code'] = 'Z1001'
+                    response_data['message'] = '系统异常'
+                else:
+                    response_data['code'] = 'Z1000'
+                    response_data['message'] = '请求成功'
+                    for domain in domain_list:
+                        domain['target'] = aes_crypto.decrypt(domain['target'])
+                        domain['description'] = aes_crypto.decrypt(domain['description'])
+                        domain['scan_time'] = domain['scan_time']
+                        domain['domain'] = aes_crypto.decrypt(domain['domain'])
+                        domain['domain_ip'] = aes_crypto.decrypt(domain['domain_ip'])
+                    response_data['total'] = total
+                    if total == 0:
+                        response_data['data'] = ''
+                    else:
+                        response_data['data'] = sql_result
+                    return str(response_data)
+        else:
+            response_data['code'] = 'Z1002'
+            response_data['message'] = '请求方法异常'
+            return str(response_data)
+    except Exception as e:
+        print(e)
+        response_data['code'] = 'Z1001'
+        response_data['message'] = '系统异常'
+        return str(response_data)
+
+@app.route('/api/portdetail',methods=['POST'])
+def port_detail():
+    """
+    获取端口详情的接口
+
+    :param:
+    :return response_data: 需要返回的数据
+    """
+    response_data = {'code': '', 'message': '', 'data': ''}
+    try:
+        if request.method == 'POST':
+            request_data = request.form.to_dict()
+            request_data = rsa_crypto.decrypt(request_data['data'])
+            request_data = json.loads(request_data)
+            pagenum = request_data['pagenum']
+            pagesize = request_data['pagesize']
+            target = request_data['target']
+            target = aes_crypto.encrypt(target)
+            token  = request_data['token']
+            query_str = {
+                'type': 'token',
+                'data': token
+            }
+            username_result = mysqldb.username(query_str)
+            if username_result == 'Z1001':
+                response_data['code'] = 'Z1001'
+                response_data['message'] = '系统异常'
+                return str(response_data)
+            elif username_result == None:
+                response_data['code'] = 'Z1004'
+                response_data['message'] = '认证失败'
+                return str(response_data)
+            else:
+                sql_result = mysqldb.target_port_list(username_result['username'], target, pagenum, pagesize)
+                port_list = sql_result['result']
+                total = sql_result['total']
+                if port_list == None:
+                    response_data['code'] = 'Z1009'
+                    response_data['message'] = '数据为空'
+                elif port_list == 'Z1001':
+                    response_data['code'] = 'Z1001'
+                    response_data['message'] = '系统异常'
+                else:
+                    response_data['code'] = 'Z1000'
+                    response_data['message'] = '请求成功'
+                    for port in port_list:
+                        port['target'] = aes_crypto.decrypt(port['target'])
+                        port['description'] = aes_crypto.decrypt(port['description'])
+                        port['scan_time'] = port['scan_time']
+                        port['port'] = aes_crypto.decrypt(port['port'])
+                        port['product'] = aes_crypto.decrypt(port['product'])
+                        port['protocol'] = aes_crypto.decrypt(port['protocol'])
+                        port['version'] = aes_crypto.decrypt(port['version'])
+                    response_data['total'] = total
+                    if total == 0:
+                        response_data['data'] = ''
+                    else:
+                        response_data['data'] = sql_result
+                    return str(response_data)
+        else:
+            response_data['code'] = 'Z1002'
+            response_data['message'] = '请求方法异常'
+            return str(response_data)
+    except Exception as e:
+        print(e)
+        response_data['code'] = 'Z1001'
+        response_data['message'] = '系统异常'
+        return str(response_data)
+
+@app.route('/api/vulndetail',methods=['POST'])
+def vuln_detail():
     """
     获取漏洞详情的接口
 
@@ -876,8 +1019,8 @@ def detail():
             target = aes_crypto.encrypt(target)
             token  = request_data['token']
             query_str = {
-                    'type': 'token',
-                    'data': token
+                'type': 'token',
+                'data': token
             }
             username_result = mysqldb.username(query_str)
             if username_result == 'Z1001':

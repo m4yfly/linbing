@@ -10,7 +10,7 @@ class Mysql_db():
 
     __v=None
 
-    def __init__(self, host = "127.0.0.1", port = 3306, user = "root", passwd = "123456", charset = "utf8" , maxconn = 20):
+    def __init__(self, host = "127.0.0.1", port = 3306, user = "root", passwd = "12345678", charset = "utf8" , maxconn = 20):
         self.host, self.port, self.user, self.passwd, self.charset = host, port, user, passwd, charset
 
     def get_conn(self):
@@ -21,7 +21,7 @@ class Mysql_db():
         :return conn: 获取到的连接
         """
         try:
-            conn=pymysql.connect(host = self.host, port = self.port, user = self.user, passwd = self.passwd, db = 'linbing', charset = self.charset)
+            conn = pymysql.connect(host = self.host, port = self.port, user = self.user, passwd = self.passwd, db = 'linbing', charset = self.charset)
             conn.autocommit(True)
             return conn
         except Exception as e:
@@ -118,7 +118,7 @@ class Mysql_db():
         :return:
         """
         flag = 0
-        sql = "create table target_port (id integer auto_increment primary key, username varchar(50), target varchar(50), create_time varchar(50), scan_time varchar(50), port varchar(50), product varchar(50), protocol varchar(50), version varchar(50)) engine = innodb default charset = utf8;"
+        sql = "create table target_port (id integer auto_increment primary key, username varchar(50), target varchar(50), description varchar(50), create_time varchar(50), scan_time varchar(50), port varchar(50), product varchar(50), protocol varchar(50), version varchar(50)) engine = innodb default charset = utf8;"
         try:
             conn=self.get_conn()
             cursor=conn.cursor(cursor=pymysql.cursors.DictCursor)
@@ -145,7 +145,7 @@ class Mysql_db():
         :return:
         """
         flag = 0
-        sql = "create table target_domain (id integer auto_increment primary key, username varchar(50), target varchar(50), create_time varchar(50), scan_time varchar(50), domain varchar(50), domain_ip varchar(65000)) engine = innodb default charset = utf8;"
+        sql = "create table target_domain (id integer auto_increment primary key, username varchar(50), target varchar(50), description varchar(50), create_time varchar(50), scan_time varchar(50), domain varchar(50), domain_ip varchar(65000)) engine = innodb default charset = utf8;"
         try:
             conn=self.get_conn()
             cursor=conn.cursor(cursor=pymysql.cursors.DictCursor)
@@ -469,7 +469,7 @@ class Mysql_db():
             cursor.close()
             self.close_conn
 
-    def save_target_port(self, username, target, port, protocol, product, version):
+    def save_target_port(self, username, target, description, port, protocol, product, version):
         """
         保存目标端口的信息
 
@@ -482,7 +482,8 @@ class Mysql_db():
         :return: 'ZXXXXX': 状态码
         """
         datetime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        sql =  "insert target_port (username, target, create_time, scan_time, port, protocol, product, version) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (username, target, datetime, datetime, port, protocol, product, version)
+        print(3453654645)
+        sql =  "insert target_port (username, target, description, create_time, scan_time, port, protocol, product, version) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (username, target, description, datetime, datetime, port, protocol, product, version)
         try:
             conn=self.get_conn()
             cursor=conn.cursor(cursor=pymysql.cursors.DictCursor)
@@ -495,7 +496,7 @@ class Mysql_db():
             cursor.close()
             self.close_conn
 
-    def update_target_port(self, username, target, port, protocol, product, version):
+    def update_target_port(self, username, target, description, port, protocol, product, version):
         """
         更新目标端口的信息
 
@@ -508,7 +509,7 @@ class Mysql_db():
         :return: 'ZXXXXX': 状态码
         """
         datetime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        sql = "update target_port set scan_time = '%s', port = '%s', protocol = '%s', product = '%s', version = '%s' where username = '%s' and target = '%s'" % (datetime, port, protocol, product, version, username, target)
+        sql = "update target_port set description = '%s', scan_time = '%s', port = '%s', protocol = '%s', product = '%s', version = '%s' where username = '%s' and target = '%s'" % (description, datetime, port, protocol, product, version, username, target)
         try:
             conn=self.get_conn()
             cursor=conn.cursor(cursor=pymysql.cursors.DictCursor)
@@ -544,7 +545,7 @@ class Mysql_db():
             cursor.close()
             self.close_conn
 
-    def save_target_domain(self, username, target, domain, domain_ip):
+    def save_target_domain(self, username, target, description, domain, domain_ip):
         """
         保存目标域名的信息
 
@@ -555,7 +556,7 @@ class Mysql_db():
         :return: 'ZXXXXX': 状态码
         """
         datetime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        sql =  "insert target_domain (username, target, create_time, scan_time, domain, domain_ip) values ('%s', '%s', '%s', '%s', '%s', '%s')" % (username, target, datetime, datetime, domain, domain_ip)
+        sql =  "insert target_domain (username, target, description, create_time, scan_time, domain, domain_ip) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (username, target, description, datetime, datetime, domain, domain_ip)
         try:
             conn=self.get_conn()
             cursor=conn.cursor(cursor=pymysql.cursors.DictCursor)
@@ -659,9 +660,9 @@ class Mysql_db():
             cursor.close()
             self.close_conn
 
-    def save_scan(self, username, target):
+    def start_scan(self, username, target):
         """
-        保存扫描选项信息
+        开始扫描选项
 
         :param: username: 用户名
         :param: target: 目标
@@ -845,7 +846,7 @@ class Mysql_db():
         """
         start = (int(pagenum)-1) * int(pagesize)
         pagesize = int (pagesize)
-        sql = "select target, create_time, scan_time, port, product, protocol, version from target_port where username = '%s' and target = '%s' limit %s, %s" % (username, target, start, pagesize)
+        sql = "select target, description, create_time, scan_time, port, product, protocol, version from target_port where username = '%s' and target = '%s' limit %s, %s" % (username, target, start, pagesize)
         total_sql = "select count(0) from target_port where username = '%s' and target = '%s' " % (username, target)
         try:
             conn=self.get_conn()
@@ -877,8 +878,8 @@ class Mysql_db():
         """
         start = (int(pagenum)-1) * int(pagesize)
         pagesize = int (pagesize)
-        sql = "select target, create_time, scan_time, domain, domain_ip from target_domain where username = '%s' and target = '%s' limit %s, %s" % (username, target, start, pagesize)
-        total_sql = "select count(0) from target_domain where username = '%s' and target = '%s' " % (username, target)
+        sql = "select target, description, scan_time, domain, domain_ip from target_domain where username = '%s' and target = '%s' limit %s, %s" % (username, target, start, pagesize)
+        total_sql = "select count(0) from target_domain where username = '%s' and target = '%s'" % (username, target)
         try:
             conn=self.get_conn()
             cursor=conn.cursor(cursor=pymysql.cursors.DictCursor)

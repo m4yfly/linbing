@@ -168,13 +168,31 @@ export default [
     },
     children: [
       {
-        path: 'list',
+        path: 'port',
+        name: '端口详情',
+        meta: {
+          icon: 'ios-infinite',
+          title: '端口详情',
+        },
+        component: () => import('@/view/components/port_detail/port_detail.vue')
+      },
+      {
+        path: 'subdomain',
+        name: '子域名详情',
+        meta: {
+          icon: 'ios-infinite',
+          title: '子域名详情',
+        },
+        component: () => import('@/view/components/domain_detail/domain_detail.vue')
+      },
+      {
+        path: 'vuln',
         name: '漏洞详情',
         meta: {
           icon: 'ios-infinite',
           title: '漏洞详情',
         },
-        component: () => import('@/view/components/detail/detail_list.vue')
+        component: () => import('@/view/components/vuln_detail/vuln_detail.vue')
       }
     ]
   },
